@@ -15,7 +15,10 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public User registerUser(User user) {
-		// TODO Auto-generated method stub
+		User exitingUser = userRepository.findByEmail(user.getEmail());
+		if(exitingUser != null) {
+			throw new RuntimeException("Emial already registered");
+		}
 		user.setRole("USER");
 		userRepository.save(user);
 		return null;
