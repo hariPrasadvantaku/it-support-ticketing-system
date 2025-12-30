@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService{
 	public User registerUser(User user) {
 		User exitingUser = userRepository.findByEmail(user.getEmail());
 		if(exitingUser != null) {
-			throw new RuntimeException("Emial already registered");
+			throw new RuntimeException("Email already registered");
 		}
 		user.setRole("USER");
 		userRepository.save(user);

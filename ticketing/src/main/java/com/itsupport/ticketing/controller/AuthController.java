@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.itsupport.ticketing.entity.User;
 import com.itsupport.ticketing.service.UserService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class AuthController {
 	@Autowired
@@ -26,11 +28,6 @@ public class AuthController {
 	
 	@PostMapping("/signup")
 	public String signup(@ModelAttribute("user") User user,Model model) {
-		
-		System.out.println("SIGNUP CONTROLLER HIT");
-	    System.out.println("Username: " + user.getUsername());
-	    System.out.println("Email: " + user.getEmail());
-	    System.out.println("Password: " + user.getPassword());
 		
 		try {
 			userService.registerUser(user);
@@ -48,14 +45,15 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-	public String login(@RequestParam String email, @RequestParam String password,Model model) {
-		System.out.println("Login Attempt "+email);
+	public String login(@RequestParam String email, @RequestParam String password,Model model,HttpSession session) {
 		User user = userService.login(email, password);
 		
 		if(user==null) {
 			model.addAttribute("error","Invalid email or password");
 			return "login";
 		}
+		
+		session.setAttribute("loggedUser", user);
 		
 		String role = user.getRole();
 		if("ADMIN".equals(role)) {
@@ -67,5 +65,12 @@ public class AuthController {
 		else {
 			return "redirect:/user/dashboard";
 		}
+		
+	}
+	
+	@GetMapping("/logout")
+	public String signout(HttpSession session) {
+		session.invalidate();
+		return "redirect:/login";
 	}
 }
