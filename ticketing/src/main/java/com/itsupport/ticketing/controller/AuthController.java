@@ -21,7 +21,6 @@ public class AuthController {
 	@GetMapping("/signup")
 	public String showsSignUpPage(Model model) {
 		
-		
 		model.addAttribute("user",new User());
 		return "signup";
 	}
@@ -44,33 +43,5 @@ public class AuthController {
 		return "login";
 	}
 	
-	@PostMapping("/login")
-	public String login(@RequestParam String email, @RequestParam String password,Model model,HttpSession session) {
-		User user = userService.login(email, password);
-		
-		if(user==null) {
-			model.addAttribute("error","Invalid email or password");
-			return "login";
-		}
-		
-		session.setAttribute("loggedUser", user);
-		
-		String role = user.getRole();
-		if("ADMIN".equals(role)) {
-			return "redirect:/admin/dashboard";
-		}
-		else if("SUPPORT".equals(role)) {
-			return "redirect:/support/dashboard";
-		}
-		else {
-			return "redirect:/user/dashboard";
-		}
-		
-	}
 	
-	@GetMapping("/logout")
-	public String signout(HttpSession session) {
-		session.invalidate();
-		return "redirect:/login";
-	}
 }
