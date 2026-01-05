@@ -37,8 +37,8 @@ public class TicketServiceImpl implements TicketService {
 	
 
 	@Override
-	public List<Ticket> getTicketsForSupport() {
-		return ticketRepository.findAll();
+	public List<Ticket> getTicketsForSupport(User supportUser) {
+		return ticketRepository.findByAssignedTo(supportUser);
 	}
 
 	@Override
