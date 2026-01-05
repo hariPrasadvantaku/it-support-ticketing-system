@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>All Tickets (Admin)</h2>
+
+<table border="1">
+    <tr>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Assigned To</th>
+        <th>Assign</th>
+    </tr>
+
+    <tr th:each="ticket : ${tickets}">
+        <td th:text="${ticket.title}"></td>
+        <td th:text="${ticket.status}"></td>
+
+        <td th:text="${ticket.assignedTo != null ?
+                      ticket.assignedTo.username : 'Not Assigned'}">
+        </td>
+
+        <td>
+            <form th:action="@{/admin/tickets/assign}" method="post">
+                <input type="hidden" name="ticketId" th:value="${ticket.id}" />
+
+                <select name="supportId">
+                    <option th:each="s : ${supports}"
+                            th:value="${s.id}"
+                            th:text="${s.username}">
+                    </option>
+                </select>
+
+                <button type="submit">Assign</button>
+            </form>
+        </td>
+    </tr>
+</table>
+	
+</body>
+</html>
