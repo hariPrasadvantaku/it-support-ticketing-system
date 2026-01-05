@@ -11,4 +11,5 @@ import com.itsupport.ticketing.entity.User;
 public interface TicketRepository extends JpaRepository<Ticket,Long> {
 	List<Ticket> findByUser(User user);
 	List<Ticket> findByStatus(TicketStatus status);
+	List<Ticket> findByAssignedTo(User user);
 }
