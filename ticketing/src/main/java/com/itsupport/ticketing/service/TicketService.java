@@ -11,4 +11,7 @@ public interface TicketService {
 	List<Ticket> getTicketsForUser(User user);
 	List<Ticket> getTicketsForSupport();
     void updateTicketStatus(Long ticketId, TicketStatus status);
+    List<Ticket> getAllTickets();
+    void assignTicket(Long ticketId, User supportUser);
+
 }
