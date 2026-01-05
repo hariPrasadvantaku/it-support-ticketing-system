@@ -37,6 +37,11 @@ public class Ticket {
     private TicketStatus status;
 
     private LocalDateTime createdAt;
+    
+    @ManyToOne
+    @JoinColumn(name = "assigned_to")
+    private User assignedTo;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
