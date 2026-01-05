@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Ticket Details</title>
+</head>
+<body>
+	<h2 th:text="${ticket.title}"></h2>
+	<p th:text="${ticket.description}"></p>
+
+	<hr>
+
+	<h3>Comments</h3>
+
+	<div th:each="c : ${comments}">
+		<p>
+			<b th:text="${c.user.username}"></b> <span th:text="${c.createdAt}"></span>
+		</p>
+		<p th:text="${c.comment}"></p>
+		<hr>
+	</div>
+
+	<form th:action="@{'/support/tickets/' + ${ticket.id} + '/comment'}"
+		method="post">
+		<textarea name="comment" required></textarea>
+		<button type="submit">Add Comment</button>
+	</form>
+
+</body>
+</html>
+
+
+
