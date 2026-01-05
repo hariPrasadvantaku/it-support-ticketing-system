@@ -13,8 +13,8 @@ import com.itsupport.ticketing.service.TicketService;
 
 @Service
 public class TicketServiceImpl implements TicketService {
-	private final TicketRepository ticketRepository ;
-	
+	private final TicketRepository ticketRepository;
+
 	public TicketServiceImpl(TicketRepository ticketRepository) {
 		this.ticketRepository = ticketRepository;
 	}
@@ -31,8 +31,22 @@ public class TicketServiceImpl implements TicketService {
 	@Override
 	public List<Ticket> getTicketsForUser(User user) {
 		// TODO Auto-generated method stub
-		
+
 		return ticketRepository.findByUser(user);
 	}
 	
+
+	@Override
+	public List<Ticket> getTicketsForSupport() {
+		return ticketRepository.findAll();
+	}
+
+	@Override
+	public void updateTicketStatus(Long ticketId, TicketStatus status) {
+		Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+		ticket.setStatus(status);
+		ticketRepository.save(ticket);
+	}
+
 }
