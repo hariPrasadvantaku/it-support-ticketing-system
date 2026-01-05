@@ -9,6 +9,7 @@ import com.itsupport.ticketing.entity.User;
 public interface TicketService {
 	void createTicket(Ticket ticket,User user);
 	List<Ticket> getTicketsForUser(User user);
+	Ticket getTicketById(Long id);
 	List<Ticket> getTicketsForSupport(User supportUser);
     void updateTicketStatus(Long ticketId, TicketStatus status);
     List<Ticket> getAllTickets();

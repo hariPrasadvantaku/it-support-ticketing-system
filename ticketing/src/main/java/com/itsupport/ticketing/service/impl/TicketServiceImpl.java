@@ -40,6 +40,12 @@ public class TicketServiceImpl implements TicketService {
 	public List<Ticket> getTicketsForSupport(User supportUser) {
 		return ticketRepository.findByAssignedTo(supportUser);
 	}
+	
+	@Override
+	public Ticket getTicketById(Long id) {
+	    return ticketRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Ticket not found"));
+	}
 
 	@Override
 	public void updateTicketStatus(Long ticketId, TicketStatus status) {
