@@ -1,7 +1,9 @@
 package com.itsupport.ticketing.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,8 +45,12 @@ public class Ticket {
     @JoinColumn(name = "assigned_to")
     private User assignedTo;
 
-
+    
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
+    private List<TicketComment> comments;
+
 }
