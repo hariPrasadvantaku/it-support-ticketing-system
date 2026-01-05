@@ -29,7 +29,7 @@ public class TicketServiceImpl implements TicketService {
 	}
 
 	@Override
-	public List<Ticket> getTicketForUser(User user) {
+	public List<Ticket> getTicketsForUser(User user) {
 		// TODO Auto-generated method stub
 		
 		return ticketRepository.findByUser(user);

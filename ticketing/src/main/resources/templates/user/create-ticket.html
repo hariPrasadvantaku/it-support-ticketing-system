@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Create Ticket</title>
+</head>
+<body>
+	<h2>Create Ticket</h2>
+
+	<form th:action="@{/user/tickets}" method="post" th:object="${ticket}">
+		<label>Title</label> <input type="text" th:field="*{title}" required />
+
+		<label>Description</label>
+		<textarea th:field="*{description}" required></textarea>
+
+		<button type="submit">Submit</button>
+	</form>
+
+</body>
+</html>

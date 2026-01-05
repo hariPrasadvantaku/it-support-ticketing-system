@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Tickets</title>
+</head>
+<body>
+	<h2>My Tickets</h2>
+
+	<a th:href="@{/user/tickets/new}">Create Ticket</a>
+
+	<table border="1">
+		<tr>
+			<th>Title</th>
+			<th>Status</th>
+			<th>Created At</th>
+		</tr>
+
+		<tr th:each="ticket : ${tickets}">
+			<td th:text="${ticket.title}"></td>
+			<td th:text="${ticket.description}"></td>
+			<td th:text="${ticket.status}"></td>
+			<td th:text="${ticket.createdAt}"></td>
+		</tr>
+	</table>
+
+</body>
+</html>

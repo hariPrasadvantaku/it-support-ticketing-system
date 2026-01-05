@@ -7,5 +7,5 @@ import com.itsupport.ticketing.entity.User;
 
 public interface TicketService {
 	void createTicket(Ticket ticket,User user);
-	List<Ticket> getTicketForUser(User user);
+	List<Ticket> getTicketsForUser(User user);
 }
