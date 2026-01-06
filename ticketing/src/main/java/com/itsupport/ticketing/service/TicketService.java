@@ -15,6 +15,7 @@ public interface TicketService {
     List<Ticket> getAllTickets();
     void assignTicket(Long ticketId, User supportUser);
     void changeStatus(Long ticketId, TicketStatus newStatus, User changedBy);
+    List<TicketStatus> getNextAllowedStatuses(TicketStatus currentStatus);
 
 
 }

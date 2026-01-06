@@ -100,6 +100,18 @@ public class TicketServiceImpl implements TicketService {
 	    ticketRepository.save(ticket);
 	}
 	
+	@Override
+	public List<TicketStatus> getNextAllowedStatuses(TicketStatus currentStatus) {
+
+	    return switch (currentStatus) {
+	        case OPEN -> List.of(TicketStatus.IN_PROGRESS);
+	        case IN_PROGRESS -> List.of(TicketStatus.RESOLVED);
+	        case RESOLVED -> List.of(TicketStatus.CLOSED);
+	        case CLOSED -> List.of();
+	    };
+	}
+
+	
 	private boolean isValidTransition(TicketStatus from, TicketStatus to) {
 
 	    return switch (from) {
@@ -109,6 +121,7 @@ public class TicketServiceImpl implements TicketService {
 	        case CLOSED -> false;
 	    };
 	}
-
+	
+	
 
 }
