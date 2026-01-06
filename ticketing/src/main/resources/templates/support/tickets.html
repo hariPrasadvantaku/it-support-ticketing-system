@@ -7,36 +7,33 @@
 <body>
 	<h2>Support Tickets</h2>
 
-<table border="1">
-    <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
+	<table border="1">
+		<tr>
+			<th>Title</th>
+			<th>Description</th>
+			<th>Status</th>
+			<th>Action</th>
+		</tr>
 
-    <tr th:each="ticket : ${tickets}">
-        <td th:text="${ticket.title}"></td>
-        <td th:text="${ticket.description}"></td>
-        <td th:text="${ticket.status}"></td>
+		<tr th:each="ticket : ${tickets}">
+			<td th:text="${ticket.title}"></td>
+			<td th:text="${ticket.description}"></td>
+			<td th:text="${ticket.status}"></td>
 
-        <td>
-            <form th:action="@{/support/tickets/update-status}" method="post">
-                <input type="hidden" name="ticketId" th:value="${ticket.id}" />
+			<td>
+				<form th:action="@{/support/tickets/update-status}" method="post">
+					<input type="hidden" name="ticketId" th:value="${ticket.id}" /> <select
+						name="status">
+						<option th:each="st : ${statusMap[ticket.id]}" th:value="${st}"
+							th:text="${st}"></option>
 
-                <select name="status">
-                    <option th:each="st : ${statuses}"
-                            th:value="${st}"
-                            th:text="${st}"
-                            th:selected="${st == ticket.status}">
-                    </option>
-                </select>
+					</select>
 
-                <button type="submit">Update</button>
-            </form>
-        </td>
-    </tr>
-</table>
-	
+					<button type="submit">Update</button>
+				</form>
+			</td>
+		</tr>
+	</table>
+
 </body>
 </html>
