@@ -1,6 +1,8 @@
 package com.itsupport.ticketing.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.itsupport.ticketing.entity.Ticket;
 import com.itsupport.ticketing.entity.TicketComment;
@@ -53,23 +56,43 @@ public class SupportTicketController {
 
 		List<Ticket> tickets = ticketService.getTicketsForSupport(supportUser);
 
+		
+		Map<Long, List<TicketStatus>> statusMap = new HashMap<>();
+
+		for (Ticket ticket : tickets) {
+		    statusMap.put(
+		        ticket.getId(),
+		        ticketService.getNextAllowedStatuses(ticket.getStatus())
+		    );
+		}
+		
 		model.addAttribute("tickets", tickets);
-		model.addAttribute("statuses", TicketStatus.values());
+		model.addAttribute("statusMap", statusMap);
+
 
 		return "support/tickets";
 	}
 
 	@PostMapping("/update-status")
-	public String updateStatus(@RequestParam Long ticketId, @RequestParam TicketStatus status) {
+	public String updateStatus(@RequestParam Long ticketId,
+	                           @RequestParam TicketStatus status,
+	                           RedirectAttributes redirectAttributes) {
 
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    try {
+	        Authentication auth =
+	            SecurityContextHolder.getContext().getAuthentication();
 
-		User user = userRepository.findByEmail(auth.getName());
+	        User user = userRepository.findByEmail(auth.getName());
 
-		ticketService.changeStatus(ticketId, status, user);
+	        ticketService.changeStatus(ticketId, status, user);
+	    } catch (Exception e) {
+	        redirectAttributes.addFlashAttribute(
+	            "error", e.getMessage());
+	    }
 
-		return "redirect:/support/tickets";
+	    return "redirect:/support/tickets";
 	}
+
 
 	@GetMapping("/{id}")
 	public String viewTicketDetails(@PathVariable Long id, Model model) {
