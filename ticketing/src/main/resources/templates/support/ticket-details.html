@@ -26,6 +26,24 @@
 		<button type="submit">Add Comment</button>
 	</form>
 
+	<h3>Status History</h3>
+
+	<table border="1">
+		<tr>
+			<th>From</th>
+			<th>To</th>
+			<th>Changed By</th>
+			<th>At</th>
+		</tr>
+
+		<tr th:each="h : ${statusHistory}">
+			<td th:text="${h.oldStatus}"></td>
+			<td th:text="${h.newStatus}"></td>
+			<td th:text="${h.changedBy.username}"></td>
+			<td th:text="${h.changedAt}"></td>
+		</tr>
+	</table>
+
 </body>
 </html>
 
