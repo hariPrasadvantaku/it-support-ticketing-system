@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.itsupport.ticketing.entity.Ticket;
 import com.itsupport.ticketing.entity.TicketComment;
 import com.itsupport.ticketing.entity.TicketStatus;
+import com.itsupport.ticketing.entity.TicketStatusHistory;
 import com.itsupport.ticketing.entity.User;
+import com.itsupport.ticketing.repository.TicketStatusHistoryRepository;
 import com.itsupport.ticketing.repository.UserRepository;
 import com.itsupport.ticketing.service.TicketCommentService;
 import com.itsupport.ticketing.service.TicketService;
@@ -27,14 +29,21 @@ public class SupportTicketController {
 	private final TicketService ticketService;
 	private final UserRepository userRepository;
 	private final TicketCommentService commentService;
+	private final TicketStatusHistoryRepository historyRepository;
 
-	public SupportTicketController(TicketService ticketService, UserRepository userRepository,
-			TicketCommentService commentService) {
 
-		this.ticketService = ticketService;
-		this.userRepository = userRepository;
-		this.commentService = commentService;
+	public SupportTicketController(
+	        TicketService ticketService,
+	        UserRepository userRepository,
+	        TicketCommentService commentService,
+	        TicketStatusHistoryRepository historyRepository) {
+
+	    this.ticketService = ticketService;
+	    this.userRepository = userRepository;
+	    this.commentService = commentService;
+	    this.historyRepository = historyRepository;
 	}
+
 
 	@GetMapping
 	public String viewTickets(Model model) {
@@ -53,21 +62,33 @@ public class SupportTicketController {
 	@PostMapping("/update-status")
 	public String updateStatus(@RequestParam Long ticketId, @RequestParam TicketStatus status) {
 
-		ticketService.updateTicketStatus(ticketId, status);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		User user = userRepository.findByEmail(auth.getName());
+
+		ticketService.changeStatus(ticketId, status, user);
+
 		return "redirect:/support/tickets";
 	}
 
 	@GetMapping("/{id}")
 	public String viewTicketDetails(@PathVariable Long id, Model model) {
 
-		Ticket ticket = ticketService.getTicketById(id);
-		List<TicketComment> comments = commentService.getCommentsByTicket(ticket);
+	    Ticket ticket = ticketService.getTicketById(id);
 
-		model.addAttribute("ticket", ticket);
-		model.addAttribute("comments", comments);
+	    List<TicketComment> comments =
+	            commentService.getCommentsByTicket(ticket);
 
-		return "support/ticket-details";
+	    List<TicketStatusHistory> history =
+	            historyRepository.findByTicketOrderByChangedAtAsc(ticket);
+
+	    model.addAttribute("ticket", ticket);
+	    model.addAttribute("comments", comments);
+	    model.addAttribute("statusHistory", history);
+
+	    return "support/ticket-details";
 	}
+
 
 	@PostMapping("/{id}/comment")
 	public String addComment(@PathVariable Long id, @RequestParam String comment) {
