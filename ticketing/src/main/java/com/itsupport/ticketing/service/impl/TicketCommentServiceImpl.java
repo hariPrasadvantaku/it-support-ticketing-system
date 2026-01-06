@@ -3,12 +3,15 @@ package com.itsupport.ticketing.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.itsupport.ticketing.entity.Ticket;
 import com.itsupport.ticketing.entity.TicketComment;
 import com.itsupport.ticketing.entity.User;
 import com.itsupport.ticketing.repository.TicketCommentRepository;
 import com.itsupport.ticketing.service.TicketCommentService;
 
+@Service
 public class TicketCommentServiceImpl implements TicketCommentService{
 	
     private final TicketCommentRepository commentRepository;

@@ -7,16 +7,19 @@ import org.springframework.stereotype.Service;
 
 import com.itsupport.ticketing.entity.Ticket;
 import com.itsupport.ticketing.entity.TicketStatus;
+import com.itsupport.ticketing.entity.TicketStatusHistory;
 import com.itsupport.ticketing.entity.User;
 import com.itsupport.ticketing.repository.TicketRepository;
+import com.itsupport.ticketing.repository.TicketStatusHistoryRepository;
 import com.itsupport.ticketing.service.TicketService;
 
 @Service
 public class TicketServiceImpl implements TicketService {
 	private final TicketRepository ticketRepository;
-
-	public TicketServiceImpl(TicketRepository ticketRepository) {
+	private final TicketStatusHistoryRepository historyRepository;
+	public TicketServiceImpl(TicketRepository ticketRepository,TicketStatusHistoryRepository historyRepository) {
 		this.ticketRepository = ticketRepository;
+		this.historyRepository = historyRepository;
 	}
 
 	@Override
@@ -68,5 +71,44 @@ public class TicketServiceImpl implements TicketService {
 	    ticket.setAssignedTo(supportUser);
 	    ticketRepository.save(ticket);
 	}
+	
+	@Override
+	public void changeStatus(Long ticketId,
+	                         TicketStatus newStatus,
+	                         User changedBy) {
+
+	    Ticket ticket = ticketRepository.findById(ticketId)
+	        .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+	    TicketStatus currentStatus = ticket.getStatus();
+
+	    if (!isValidTransition(currentStatus, newStatus)) {
+	        throw new RuntimeException(
+	            "Invalid status transition: " + currentStatus + " → " + newStatus);
+	    }
+
+	    TicketStatusHistory history = new TicketStatusHistory();
+	    history.setTicket(ticket);
+	    history.setOldStatus(currentStatus);
+	    history.setNewStatus(newStatus);
+	    history.setChangedAt(LocalDateTime.now());
+	    history.setChangedBy(changedBy);
+
+	    historyRepository.save(history);
+
+	    ticket.setStatus(newStatus);
+	    ticketRepository.save(ticket);
+	}
+	
+	private boolean isValidTransition(TicketStatus from, TicketStatus to) {
+
+	    return switch (from) {
+	        case OPEN -> to == TicketStatus.IN_PROGRESS;
+	        case IN_PROGRESS -> to == TicketStatus.RESOLVED;
+	        case RESOLVED -> to == TicketStatus.CLOSED;
+	        case CLOSED -> false;
+	    };
+	}
+
 
 }
