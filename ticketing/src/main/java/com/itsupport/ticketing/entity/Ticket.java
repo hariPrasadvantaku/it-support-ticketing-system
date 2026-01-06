@@ -37,7 +37,9 @@ public class Ticket {
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
     private TicketStatus status;
+
 
     private LocalDateTime createdAt;
     
