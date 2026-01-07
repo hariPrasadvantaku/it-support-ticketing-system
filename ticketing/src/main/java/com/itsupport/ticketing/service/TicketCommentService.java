@@ -10,6 +10,7 @@ import com.itsupport.ticketing.entity.User;
 
 @Service
 public interface TicketCommentService {
-	void addComment(Ticket ticket,String comment,User user);
-	List<TicketComment> getCommentsByTicket(Ticket ticket);
+	List<TicketComment> getCommentsForTicket(Ticket ticket, User viewer);
+
+    void addComment(Ticket ticket, String content, User author);
 }

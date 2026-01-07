@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Ticket Details</title>
+<title>Insert title here</title>
 </head>
 <body>
 	<h2 th:text="${ticket.title}"></h2>
@@ -15,12 +15,6 @@
 		</p>
 	</div>
 
-	<form th:action="@{'/support/tickets/' + ${ticket.id} + '/comment'}"
-		method="post">
-		<textarea name="comment" required></textarea>
-		<button type="submit">Reply</button>
-	</form>
-
 	<h3>Status History</h3>
 	<ul>
 		<li th:each="h : ${statusHistory}"><span th:text="${h.oldStatus}"></span>
@@ -29,7 +23,4 @@
 	</ul>
 
 </body>
-</html>	
-
-
-
+</html>

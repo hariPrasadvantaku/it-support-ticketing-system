@@ -12,31 +12,44 @@ import com.itsupport.ticketing.repository.TicketCommentRepository;
 import com.itsupport.ticketing.service.TicketCommentService;
 
 @Service
-public class TicketCommentServiceImpl implements TicketCommentService{
-	
+public class TicketCommentServiceImpl implements TicketCommentService {
+
     private final TicketCommentRepository commentRepository;
-    
-    
-    
-	public TicketCommentServiceImpl(TicketCommentRepository commentRepository) {
-		this.commentRepository = commentRepository;
-	}
 
-	@Override
-	public void addComment(Ticket ticket, String comment, User user) {
-		// TODO Auto-generated method stub
-		TicketComment tc = new TicketComment();
-		tc.setTicket(ticket);
-		tc.setUser(user);
-		tc.setComment(comment);
-		tc.setCreatedAt(LocalDateTime.now());
-		commentRepository.save(tc);
-	}
+    public TicketCommentServiceImpl(TicketCommentRepository commentRepository) {
+        this.commentRepository = commentRepository;
+    }
 
-	@Override
-	public List<TicketComment> getCommentsByTicket(Ticket ticket) {
-		// TODO Auto-generated method stub
-		return commentRepository.findByTicketOrderByCreatedAtAsc(ticket);
-	}
+    @Override
+    public List<TicketComment> getCommentsForTicket(Ticket ticket, User viewer) {
 
+        String role = viewer.getRole();
+
+        if (role.equals("ROLE_USER") &&
+            !ticket.getUser().getId().equals(viewer.getId())) {
+            throw new RuntimeException("Unauthorized access");
+        }
+
+ 
+        if (role.equals("ROLE_SUPPORT") &&
+            (ticket.getAssignedTo() == null ||
+             !ticket.getAssignedTo().getId().equals(viewer.getId()))) {
+            throw new RuntimeException("Unauthorized access");
+        }
+
+
+        return commentRepository.findByTicketOrderByCreatedAtAsc(ticket);
+    }
+
+    @Override
+    public void addComment(Ticket ticket, String content, User author) {
+
+        TicketComment comment = new TicketComment();
+        comment.setTicket(ticket);
+        comment.setContent(content);
+        comment.setUser(author);
+        comment.setCreatedAt(LocalDateTime.now());
+
+        commentRepository.save(comment);
+    }
 }

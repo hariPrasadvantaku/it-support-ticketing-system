@@ -5,40 +5,45 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h2>All Tickets (Admin)</h2>
-
-<table border="1">
-    <tr>
-        <th>Title</th>
-        <th>Status</th>
-        <th>Assigned To</th>
-        <th>Assign</th>
-    </tr>
-
-    <tr th:each="ticket : ${tickets}">
-        <td th:text="${ticket.title}"></td>
-        <td th:text="${ticket.status}"></td>
-
-        <td th:text="${ticket.assignedTo != null ?
-                      ticket.assignedTo.username : 'Not Assigned'}">
-        </td>
-
-        <td>
-            <form th:action="@{/admin/tickets/assign}" method="post">
-                <input type="hidden" name="ticketId" th:value="${ticket.id}" />
-
-                <select name="supportId">
-                    <option th:each="s : ${supports}"
-                            th:value="${s.id}"
-                            th:text="${s.username}">
-                    </option>
-                </select>
-
-                <button type="submit">Assign</button>
-            </form>
-        </td>
-    </tr>
-</table>
 	
+	<h2>All Tickets</h2>
+
+	<table border="1">
+		<tr>
+			<th>User</th>
+			<th>Title</th>
+			<th>Description</th>
+			<th>Assigned To</th>
+			<th>Status</th>
+			<th>Assign</th>
+			<th>View</th>
+		</tr>
+
+		<tr th:each="t : ${tickets}">
+			<td th:text="${t.user.username}"></td>
+			<td th:text="${t.title}"></td>
+			<td th:text="${t.description}"></td>
+			<td
+				th:text="${t.assignedTo != null ?
+                      t.assignedTo.username : 'Not Assigned'}">
+			</td>
+			<td th:text="${t.status}"></td>
+
+			<td>
+				<form th:action="@{/admin/tickets/assign}" method="post">
+					<input type="hidden" name="ticketId" th:value="${t.id}"> <select
+						name="supportId">
+						<option th:each="s : ${supports}" th:value="${s.id}"
+							th:text="${s.username}"></option>
+					</select>
+					<button type="submit">Assign</button>
+				</form>
+			</td>
+
+			<td><a th:href="@{'/admin/tickets/' + ${t.id}}">Details</a></td>
+		</tr>
+	</table>
+
+
 </body>
 </html>
