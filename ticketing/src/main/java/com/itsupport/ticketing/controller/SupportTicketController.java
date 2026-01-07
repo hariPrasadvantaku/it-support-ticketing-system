@@ -21,6 +21,7 @@ import com.itsupport.ticketing.entity.User;
 import com.itsupport.ticketing.repository.TicketStatusHistoryRepository;
 import com.itsupport.ticketing.repository.UserRepository;
 import com.itsupport.ticketing.service.TicketCommentService;
+import com.itsupport.ticketing.service.TicketImageService;
 import com.itsupport.ticketing.service.TicketService;
 
 @Controller
@@ -31,17 +32,20 @@ public class SupportTicketController {
     private final UserRepository userRepository;
     private final TicketCommentService commentService;
     private final TicketStatusHistoryRepository historyRepository;
-
+    private final TicketImageService imageService;
+    
     public SupportTicketController(
             TicketService ticketService,
             UserRepository userRepository,
             TicketCommentService commentService,
-            TicketStatusHistoryRepository historyRepository) {
+            TicketStatusHistoryRepository historyRepository,
+            TicketImageService imageService) {
 
         this.ticketService = ticketService;
         this.userRepository = userRepository;
         this.commentService = commentService;
         this.historyRepository = historyRepository;
+        this.imageService = imageService;
     }
 
     @GetMapping
@@ -61,6 +65,7 @@ public class SupportTicketController {
 
         model.addAttribute("tickets", tickets);
         model.addAttribute("statusMap", statusMap);
+        
 
         return "support/tickets";
     }
@@ -98,6 +103,8 @@ public class SupportTicketController {
             commentService.getCommentsForTicket(ticket, support));
         model.addAttribute("statusHistory",
             historyRepository.findByTicketOrderByChangedAtAsc(ticket));
+        model.addAttribute("images", imageService.getImages(ticket));
+
 
         return "support/ticket-details";
     }
