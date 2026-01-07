@@ -5,16 +5,24 @@
 <title>Create Ticket</title>
 </head>
 <body>
-	<h2>Create Ticket</h2>
 
-	<form th:action="@{/user/tickets}" method="post" th:object="${ticket}">
-		<label>Title</label> <input type="text" th:field="*{title}" required />
+	<h2>Create New Ticket</h2>
 
-		<label>Description</label>
+	<form th:action="@{/user/tickets/create}" th:object="${ticket}"
+		method="post">
+
+		<label>Title</label><br> <input type="text" th:field="*{title}"
+			required /><br>
+		<br> <label>Description</label><br>
 		<textarea th:field="*{description}" required></textarea>
+		<br>
+		<br>
 
-		<button type="submit">Submit</button>
+		<button type="submit">Submit Ticket</button>
 	</form>
+
+	<br>
+	<a href="/user/tickets">Back to My Tickets</a>
 
 </body>
 </html>
