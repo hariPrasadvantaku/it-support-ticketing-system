@@ -5,49 +5,29 @@
 <title>Tickets</title>
 </head>
 <body>
+	<a href="/user/tickets/create">➕ Create New Ticket</a>
+	<br>
+	<br>
+
 	<h2>My Tickets</h2>
 
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
+	<table border=1>
+		<tr>
+			<th>Title</th>
+			<th>Description</th>
+			<th>Status</th>
+			<th>Action</th>
+		</tr>
 
-    <tr th:each="ticket : ${tickets}">
-        <td th:text="${ticket.title}"></td>
-        <td th:text="${ticket.description}"></td>
-        <td th:text="${ticket.status}"></td>
-        <td>
-            <a th:href="@{'/user/tickets/' + ${ticket.id}}">
-                View
-            </a>
-        </td>
-    </tr>
-</table>
+		<tr th:each="ticket : ${tickets}">
+			<td th:text="${ticket.title}"></td>
+			<td th:text="${ticket.description}"></td>
+			<td th:text="${ticket.status}"></td>
+			<td><a th:href="@{'/user/tickets/' + ${ticket.id}}"> View </a></td>
+		</tr>
+	</table>
 
-	
-	<h2>My Tickets</h2>
 
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
-
-    <tr th:each="ticket : ${tickets}">
-        <td th:text="${ticket.title}"></td>
-        <td th:text="${ticket.status}"></td>
-        <td>
-            <a th:href="@{'/user/tickets/' + ${ticket.id}}">
-                View
-            </a>
-        </td>
-    </tr>
-</table>
-	
 
 </body>
 </html>

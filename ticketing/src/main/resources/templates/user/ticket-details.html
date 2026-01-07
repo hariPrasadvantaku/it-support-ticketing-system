@@ -1,27 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <title>Ticket Details</title>
 </head>
 <body>
-	<h2 th:text="${ticket.title}"></h2>
-	<p th:text="${ticket.description}"></p>
 
-	<h3>Comments</h3>
+<h2>Ticket Details</h2>
 
-	<div th:each="c : ${comments}">
-		<p>
-			<strong th:text="${c.user.username}"></strong>: <span
-				th:text="${c.content}"></span> <small th:text="${c.createdAt}"></small>
-		</p>
-	</div>
+<p><b>Title:</b> <span th:text="${ticket.title}"></span></p>
+<p><b>Description:</b> <span th:text="${ticket.description}"></span></p>
+<p><b>Status:</b> <span th:text="${ticket.status}"></span></p>
 
-	<form th:action="@{'/user/tickets/' + ${ticket.id} + '/comment'}"
-		method="post">
-		<textarea name="comment" required></textarea>
-		<button type="submit">Reply</button>
-	</form>
+<hr/>
+
+<h3>Status History</h3>
+<ul>
+    <li th:each="h : ${statusHistory}">
+        <span th:text="${h.oldStatus}"></span>
+        →
+        <span th:text="${h.newStatus}"></span>
+        |
+        <span th:text="${#temporals.format(h.changedAt, 'dd-MM-yyyy HH:mm')}"></span>
+    </li>
+</ul>
+
+<hr/>
+
+<h3>Comments</h3>
+
+<div th:each="c : ${comments}">
+    <p>
+        <b th:text="${c.user.username}"></b> :
+        <span th:text="${c.content}"></span>
+        <small th:text="${#temporals.format(c.createdAt, 'dd-MM-yyyy HH:mm')}"></small>
+    </p>
+</div>
+
+<hr/>
+
+<h3>Add Comment</h3>
+
+<form th:action="@{'/user/tickets/' + ${ticket.id} + '/comment'}" method="post">
+    <textarea name="comment" required></textarea><br/>
+    <button type="submit">Add Comment</button>
+</form>
 
 </body>
 </html>
