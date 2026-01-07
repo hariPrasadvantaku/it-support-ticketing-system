@@ -1,5 +1,6 @@
 /target/
 /bin/
+ticketing/uploads/
 *.log
 .classpath
 .project
