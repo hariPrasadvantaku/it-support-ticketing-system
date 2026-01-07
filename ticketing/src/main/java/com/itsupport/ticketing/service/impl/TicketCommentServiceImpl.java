@@ -48,8 +48,6 @@ public class TicketCommentServiceImpl implements TicketCommentService {
         comment.setTicket(ticket);
         comment.setContent(content);
         comment.setUser(author);
-        comment.setCreatedAt(LocalDateTime.now());
-
         commentRepository.save(comment);
     }
 }
