@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.itsupport.ticketing.entity.Ticket;
 import com.itsupport.ticketing.entity.User;
 import com.itsupport.ticketing.repository.TicketStatusHistoryRepository;
 import com.itsupport.ticketing.repository.UserRepository;
 import com.itsupport.ticketing.service.TicketCommentService;
+import com.itsupport.ticketing.service.TicketImageService;
 import com.itsupport.ticketing.service.TicketService;
 
 @Controller
@@ -27,17 +29,20 @@ public class UserTicketController {
     private final TicketService ticketService;
     private final UserRepository userRepository;
     private final TicketCommentService commentService;
-    private TicketStatusHistoryRepository historyRepository;
+    private final TicketStatusHistoryRepository historyRepository;
+    private final TicketImageService imageService;
     public UserTicketController(
             TicketService ticketService,
             UserRepository userRepository,
             TicketCommentService commentService,
-            TicketStatusHistoryRepository historyRepository) {
+            TicketStatusHistoryRepository historyRepository,
+            TicketImageService imageService) {
 
         this.ticketService = ticketService;
         this.userRepository = userRepository;
         this.commentService = commentService;
         this.historyRepository = historyRepository;
+        this.imageService = imageService;
     }
     
     @GetMapping("/create")
@@ -45,20 +50,6 @@ public class UserTicketController {
         model.addAttribute("ticket", new Ticket());
         return "user/create-ticket";
     }
-    
-    @PostMapping("/create")
-    public String createTicket(@ModelAttribute Ticket ticket) {
-
-        Authentication auth =
-            SecurityContextHolder.getContext().getAuthentication();
-
-        User user = userRepository.findByEmail(auth.getName());
-
-        ticketService.createTicket(ticket, user);
-
-        return "redirect:/user/tickets";
-    }
-
    
     @GetMapping
     public String viewUserTickets(Model model) {
@@ -94,6 +85,8 @@ public class UserTicketController {
             commentService.getCommentsForTicket(ticket, user));
         model.addAttribute("statusHistory",
             historyRepository.findByTicketOrderByChangedAtAsc(ticket));
+        model.addAttribute("images", imageService.getImages(ticket));
+
 
         return "user/ticket-details";
     }
@@ -115,5 +108,27 @@ public class UserTicketController {
 
         return "redirect:/user/tickets/" + id;
     }
+    
+    @PostMapping("/create")
+    public String createTicket(
+            @ModelAttribute Ticket ticket,
+            @RequestParam(value = "images", required = false)
+            List<MultipartFile> images) {
+
+        Authentication auth =
+            SecurityContextHolder.getContext().getAuthentication();
+
+        User user = userRepository.findByEmail(auth.getName());
+
+        ticketService.createTicket(ticket, user);
+
+        if (images != null && !images.isEmpty()) {
+            imageService.uploadImages(ticket, images);
+        }
+
+        return "redirect:/user/tickets";
+    }
+
+
 
 }
