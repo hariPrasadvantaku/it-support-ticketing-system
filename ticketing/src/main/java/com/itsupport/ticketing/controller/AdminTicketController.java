@@ -15,6 +15,7 @@ import com.itsupport.ticketing.entity.User;
 import com.itsupport.ticketing.repository.TicketStatusHistoryRepository;
 import com.itsupport.ticketing.repository.UserRepository;
 import com.itsupport.ticketing.service.TicketCommentService;
+import com.itsupport.ticketing.service.TicketImageService;
 import com.itsupport.ticketing.service.TicketService;
 
 @Controller
@@ -25,17 +26,20 @@ public class AdminTicketController {
     private final UserRepository userRepository;
     private final TicketCommentService commentService;
     private final TicketStatusHistoryRepository historyRepository;
+    private final TicketImageService imageService;
 
     public AdminTicketController(
             TicketService ticketService,
             UserRepository userRepository,
             TicketCommentService commentService,
-            TicketStatusHistoryRepository historyRepository) {
+            TicketStatusHistoryRepository historyRepository,
+            TicketImageService imageService) {
 
         this.ticketService = ticketService;
         this.userRepository = userRepository;
         this.commentService = commentService;
         this.historyRepository = historyRepository;
+        this.imageService = imageService;
     }
 
     @GetMapping
@@ -73,6 +77,8 @@ public class AdminTicketController {
             commentService.getCommentsForTicket(ticket, admin));
         model.addAttribute("statusHistory",
             historyRepository.findByTicketOrderByChangedAtAsc(ticket));
+        model.addAttribute("images", imageService.getImages(ticket));
+
 
         return "admin/ticket-details";
     }
