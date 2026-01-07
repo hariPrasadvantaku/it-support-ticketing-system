@@ -6,11 +6,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.itsupport.ticketing.entity.Ticket;
-import com.itsupport.ticketing.entity.TicketComment;
 import com.itsupport.ticketing.entity.User;
+import com.itsupport.ticketing.repository.TicketStatusHistoryRepository;
 import com.itsupport.ticketing.repository.UserRepository;
 import com.itsupport.ticketing.service.TicketCommentService;
 import com.itsupport.ticketing.service.TicketService;
@@ -22,18 +27,39 @@ public class UserTicketController {
     private final TicketService ticketService;
     private final UserRepository userRepository;
     private final TicketCommentService commentService;
-
+    private TicketStatusHistoryRepository historyRepository;
     public UserTicketController(
             TicketService ticketService,
             UserRepository userRepository,
-            TicketCommentService commentService) {
+            TicketCommentService commentService,
+            TicketStatusHistoryRepository historyRepository) {
 
         this.ticketService = ticketService;
         this.userRepository = userRepository;
         this.commentService = commentService;
+        this.historyRepository = historyRepository;
+    }
+    
+    @GetMapping("/create")
+    public String showCreateTicketForm(Model model) {
+        model.addAttribute("ticket", new Ticket());
+        return "user/create-ticket";
+    }
+    
+    @PostMapping("/create")
+    public String createTicket(@ModelAttribute Ticket ticket) {
+
+        Authentication auth =
+            SecurityContextHolder.getContext().getAuthentication();
+
+        User user = userRepository.findByEmail(auth.getName());
+
+        ticketService.createTicket(ticket, user);
+
+        return "redirect:/user/tickets";
     }
 
-    // 1️⃣ View all tickets of logged-in user
+   
     @GetMapping
     public String viewUserTickets(Model model) {
 
@@ -50,9 +76,8 @@ public class UserTicketController {
         return "user/tickets";
     }
 
-    // 2️⃣ View single ticket + comments
     @GetMapping("/{id}")
-    public String viewTicket(@PathVariable Long id, Model model) {
+    public String viewTicketDetails(@PathVariable Long id, Model model) {
 
         Authentication auth =
             SecurityContextHolder.getContext().getAuthentication();
@@ -60,14 +85,20 @@ public class UserTicketController {
         User user = userRepository.findByEmail(auth.getName());
         Ticket ticket = ticketService.getTicketById(id);
 
-        List<TicketComment> comments =
-            commentService.getCommentsForTicket(ticket, user);
+        if (!ticket.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Unauthorized access");
+        }
 
         model.addAttribute("ticket", ticket);
-        model.addAttribute("comments", comments);
+        model.addAttribute("comments",
+            commentService.getCommentsForTicket(ticket, user));
+        model.addAttribute("statusHistory",
+            historyRepository.findByTicketOrderByChangedAtAsc(ticket));
 
         return "user/ticket-details";
     }
+
+
 
     @PostMapping("/{id}/comment")
     public String addComment(
