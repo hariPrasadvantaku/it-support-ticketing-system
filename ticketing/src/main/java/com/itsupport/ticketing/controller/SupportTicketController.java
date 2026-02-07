@@ -104,7 +104,10 @@ public class SupportTicketController {
         model.addAttribute("statusHistory",
             historyRepository.findByTicketOrderByChangedAtAsc(ticket));
         model.addAttribute("images", imageService.getImages(ticket));
-
+        Map<Long, List<TicketStatus>> statusMap = new HashMap<>();
+        statusMap.put(ticket.getId(),
+            ticketService.getNextAllowedStatuses(ticket.getStatus()));
+        model.addAttribute("statusMap", statusMap);
 
         return "support/ticket-details";
     }
