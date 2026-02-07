@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>IT Support</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+    <h2>IT Support Ticketing</h2>
+    <a th:href="@{/logout}">Logout</a>
+</header>
+
+<div class="container">
+    
+    <div th:replace="~{::content}"></div>
+</div>
+
+</body>
+</html>

@@ -12,4 +12,3 @@ public class ErrorController {
         return "access-denied";
     }
 }
-

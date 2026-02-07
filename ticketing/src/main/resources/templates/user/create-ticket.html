@@ -8,19 +8,19 @@
 
 	<h2>Create New Ticket</h2>
 
-	<form th:action="@{/user/tickets/create}" method="post" enctype="multipart/form-data">
+	<form th:action="@{/user/tickets/create}" method="post"
+		enctype="multipart/form-data">
 
-    <label>Title</label><br/>
-    <input type="text" name="title" required /><br/><br/>
+		<label>Title</label><br /> <input type="text" name="title" required /><br />
+		<br /> <label>Description</label><br />
+		<textarea name="description" required></textarea>
+		<br />
+		<br /> <label>Attach Images</label><br /> <input type="file"
+			name="images" multiple accept="image/*" /><br />
+		<br />
 
-    <label>Description</label><br/>
-    <textarea name="description" required></textarea><br/><br/>
-
-    <label>Attach Images</label><br/>
-    <input type="file" name="images" multiple accept="image/*"/><br/><br/>
-
-    <button type="submit">Create Ticket</button>
-</form>
+		<button type="submit">Create Ticket</button>
+	</form>
 
 
 	<br>
