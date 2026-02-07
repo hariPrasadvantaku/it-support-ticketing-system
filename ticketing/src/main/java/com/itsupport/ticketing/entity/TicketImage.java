@@ -23,13 +23,16 @@ public class TicketImage {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String fileName;
+	private String fileName;	
 
 	private String filePath;
 	
 	@Lob
 	@Column(columnDefinition = "LONGBLOB")
 	private byte[] data;
+
+	private String type;
+
 
 	@ManyToOne
 	@JoinColumn(name = "ticket_id", nullable = false)

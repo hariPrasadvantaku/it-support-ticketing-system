@@ -34,6 +34,7 @@ public class TicketImageServiceImpl implements TicketImageService {
                 img.setFileName(file.getOriginalFilename());
                 img.setData(file.getBytes());
                 img.setFilePath(null);       
+                img.setType(file.getContentType());
 
                 repo.save(img);
 
