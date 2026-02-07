@@ -30,4 +30,4 @@ public class TicketImageController {
                 .contentType(MediaType.IMAGE_JPEG) // works for png/jpg
                 .body(img.getData());
     }
-}
+}	
