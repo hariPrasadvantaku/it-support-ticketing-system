@@ -2,14 +2,17 @@
 package com.itsupport.ticketing.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.itsupport.ticketing.entity.User;
 import com.itsupport.ticketing.repository.UserRepository;
@@ -17,9 +20,17 @@ import com.itsupport.ticketing.service.UserService;
 
 @Controller
 public class AuthController {
-	@Autowired
-	private UserService userService;
-	private UserRepository userRepository;
+	   private final UserService userService;
+	    private final UserRepository userRepository;
+	    private final PasswordEncoder passwordEncoder;
+
+	    public AuthController(UserService userService,
+	                          UserRepository userRepository,
+	                          PasswordEncoder passwordEncoder) {
+	        this.userService = userService;
+	        this.userRepository = userRepository;
+	        this.passwordEncoder = passwordEncoder;
+	    }
 	
 	@GetMapping("/signup")
 	public String showsSignUpPage(Model model) {
@@ -52,24 +63,26 @@ public class AuthController {
 	}
 
 	@PostMapping("/change-password")
-	public String changePassword(
-	        @RequestParam String oldPassword,
-	        @RequestParam String newPassword) {
-
-	    Authentication auth =
-	        SecurityContextHolder.getContext().getAuthentication();
+	public String changePassword(@RequestParam String oldPassword,
+	                              @RequestParam String newPassword,
+	                              Authentication auth,
+	                              RedirectAttributes ra) {
 
 	    User user = userRepository.findByEmail(auth.getName());
 
-	    if (!user.getPassword().equals(oldPassword)) {
-	        throw new RuntimeException("Wrong old password");
+	    if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+	        ra.addFlashAttribute("error", "Old password is incorrect!");
+	        return "redirect:/change-password";
 	    }
 
-	    user.setPassword(newPassword);
+	    user.setPassword(passwordEncoder.encode(newPassword));
 	    userRepository.save(user);
 
-	    return "redirect:/dashboard";
+	    ra.addFlashAttribute("success", "Password updated successfully!");
+	    return "redirect:/change-password";
 	}
+
+
 
 	
 }
