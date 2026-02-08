@@ -32,7 +32,9 @@ public class User {
 
     @Column(nullable = false)
     private String role; 
-    
+    @Column(nullable = false)
+    private boolean active = true;
+
     private LocalDateTime createdAt;
     
     @PrePersist
