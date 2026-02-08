@@ -1,0 +1,31 @@
+<form th:action="@{/admin/users/update}" method="post">
+
+    <input type="hidden" name="id" th:value="${user.id}"/>
+
+    <div class="mb-3">
+        <label>Username</label>
+        <input type="text" name="username" th:value="${user.username}" class="form-control"/>
+    </div>
+
+    <div class="mb-3">
+        <label>Email</label>
+        <input type="email" name="email" th:value="${user.email}" class="form-control"/>
+    </div>
+
+    <div class="mb-3">
+        <label>New Password (optional)</label>
+        <input type="password" name="newPassword" class="form-control"/>
+        <small class="text-muted">Leave empty to keep old password</small>
+    </div>
+
+    <div class="mb-3">
+        <label>Role</label>
+        <select name="role" class="form-select">
+            <option value="USER" th:selected="${user.role=='USER'}">User</option>
+            <option value="SUPPORT" th:selected="${user.role=='SUPPORT'}">Support</option>
+            <option value="ADMIN" th:selected="${user.role=='ADMIN'}">Admin</option>
+        </select>
+    </div>
+
+    <button class="btn btn-primary">Update</button>
+</form>
