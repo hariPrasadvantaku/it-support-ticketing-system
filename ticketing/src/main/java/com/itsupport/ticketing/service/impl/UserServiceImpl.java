@@ -40,4 +40,22 @@ public class UserServiceImpl implements UserService{
 		return null;
 	}
 	
+	@Override
+	public void updateUser(User updatedUser, String newPassword) {
+
+	    User existing = userRepository.findById(updatedUser.getId())
+	                                   .orElseThrow();
+
+	    existing.setUsername(updatedUser.getUsername());
+	    existing.setEmail(updatedUser.getEmail());
+	    existing.setRole(updatedUser.getRole());
+
+	    if (newPassword != null && !newPassword.isBlank()) {
+	        existing.setPassword(passwordEncoder.encode(newPassword));
+	    }
+
+	    userRepository.save(existing);
+	}
+
+	
 }
