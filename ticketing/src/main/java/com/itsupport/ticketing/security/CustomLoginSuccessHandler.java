@@ -15,26 +15,18 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    @Override
-    public void onAuthenticationSuccess(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Authentication authentication)
-            throws IOException,ServletException{
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws IOException, ServletException {
 
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            String role = authority.getAuthority();
+		String role = authentication.getAuthorities().iterator().next().getAuthority();
 
-            if ("ROLE_ADMIN".equals(role)) {
-                response.sendRedirect(request.getContextPath() + "/admin/dashboard");
-                return;
-            }
-            if ("ROLE_SUPPORT".equals(role)) {
-                response.sendRedirect(request.getContextPath() + "/support/dashboard");
-                return;
-            }
-        }
-
-        response.sendRedirect(request.getContextPath() + "/user/dashboard");
-    }
+		if (role.equals("ROLE_ADMIN")) {
+			response.sendRedirect("/admin/dashboard");
+		} else if (role.equals("ROLE_SUPPORT")) {
+			response.sendRedirect("/support/dashboard");
+		} else {
+			response.sendRedirect("/user/dashboard");
+		}
+	}
 }
