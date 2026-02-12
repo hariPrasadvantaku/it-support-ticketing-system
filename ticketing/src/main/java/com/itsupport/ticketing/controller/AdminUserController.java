@@ -24,12 +24,11 @@ public class AdminUserController {
     private final UserRepository userRepository;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final TicketRepository ticketRepository;
-    public AdminUserController(UserRepository userRepository,UserService userService,PasswordEncoder passwordEncoder,TicketRepository ticketRepository) {
+
+    public AdminUserController(UserRepository userRepository,UserService userService,PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-        this.ticketRepository=ticketRepository;
     }
 
     @GetMapping("/create")
@@ -48,7 +47,11 @@ public class AdminUserController {
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password)); // IMPORTANT
+        user.setPassword(passwordEncoder.encode(password));
+
+        if (!role.startsWith("ROLE_")) {
+            role = "ROLE_" + role;
+        }
         user.setRole(role);
 
         userRepository.save(user);
@@ -56,10 +59,11 @@ public class AdminUserController {
         return "redirect:/admin/users";
     }
 
+
     
     @GetMapping
     public String listUsers(Model model) {
-        List<User> users = userRepository.findByActiveTrue(); // CORRECT
+        List<User> users = userRepository.findByActiveTrue(); 
         model.addAttribute("users", users);
         return "admin/users";
     }
