@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService{
 			throw new RuntimeException("Email already registered");
 		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-	    user.setRole("ROLE_USER");
+	    user.setRole("ROLE_ADMIN");
 		userRepository.save(user);
 		return null;
 	}
