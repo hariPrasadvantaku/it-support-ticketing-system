@@ -11,15 +11,18 @@ import com.itsupport.ticketing.entity.TicketStatusHistory;
 import com.itsupport.ticketing.entity.User;
 import com.itsupport.ticketing.repository.TicketRepository;
 import com.itsupport.ticketing.repository.TicketStatusHistoryRepository;
+import com.itsupport.ticketing.repository.UserRepository;
 import com.itsupport.ticketing.service.TicketService;
 
 @Service
 public class TicketServiceImpl implements TicketService {
 	private final TicketRepository ticketRepository;
 	private final TicketStatusHistoryRepository historyRepository;
-	public TicketServiceImpl(TicketRepository ticketRepository,TicketStatusHistoryRepository historyRepository) {
+	private final UserRepository userRepository;
+	public TicketServiceImpl(TicketRepository ticketRepository,TicketStatusHistoryRepository historyRepository,UserRepository userRepository) {
 		this.ticketRepository = ticketRepository;
 		this.historyRepository = historyRepository;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -64,11 +67,23 @@ public class TicketServiceImpl implements TicketService {
 	}
 
 	@Override
-	public void assignTicket(Long ticketId, User supportUser) {
+	public void assignTicket(Long ticketId, Long supportId) {
+
 	    Ticket ticket = ticketRepository.findById(ticketId)
 	            .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
-	    ticket.setAssignedTo(supportUser);
+	    User support = userRepository.findById(supportId)
+	            .orElseThrow(() -> new RuntimeException("Support not found"));
+
+	    if (!"ROLE_SUPPORT".equals(support.getRole())) {
+	        throw new RuntimeException("User is not a support");
+	    }
+
+	    if (!support.isActive()) {
+	        throw new RuntimeException("Cannot assign ticket to inactive user");
+	    }
+
+	    ticket.setAssignedTo(support);
 	    ticketRepository.save(ticket);
 	}
 	
