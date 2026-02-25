@@ -45,21 +45,20 @@ public class AdminTicketController {
     @GetMapping
     public String viewAllTickets(Model model) {
 
-    	model.addAttribute("tickets", ticketService.getAllTickets());
+        model.addAttribute("tickets", ticketService.getAllTickets());
+
+       
         model.addAttribute("supports",
-                userRepository.findByRole("ROLE_SUPPORT"));
+                userRepository.findByRoleAndActiveTrue("ROLE_SUPPORT"));
 
         return "admin/tickets";
     }
-
     @PostMapping("/assign")
     public String assignTicket(@RequestParam Long ticketId,
                                @RequestParam Long supportId) {
 
-        User support = userRepository.findById(supportId)
-                .orElseThrow(() -> new RuntimeException("Support not found"));
+        ticketService.assignTicket(ticketId, supportId);
 
-        ticketService.assignTicket(ticketId, support);
         return "redirect:/admin/tickets";
     }
 
