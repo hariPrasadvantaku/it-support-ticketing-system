@@ -13,7 +13,7 @@ public interface TicketService {
 	List<Ticket> getTicketsForSupport(User supportUser);
     void updateTicketStatus(Long ticketId, TicketStatus status);
     List<Ticket> getAllTickets();
-    void assignTicket(Long ticketId, User supportUser);
+    public void assignTicket(Long ticketId, Long supportId);
     void changeStatus(Long ticketId, TicketStatus newStatus, User changedBy);
     List<TicketStatus> getNextAllowedStatuses(TicketStatus currentStatus);
 
