@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 	    }
 
 	    if (!user.isActive()) {
-	        throw new UsernameNotFoundException("User is deactivated");
+	        throw new UsernameNotFoundException("Your account is deactivated. Contact admin.");
 	    }
 
 	    return org.springframework.security.core.userdetails.User.builder()

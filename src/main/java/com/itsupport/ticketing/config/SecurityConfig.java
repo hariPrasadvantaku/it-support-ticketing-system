@@ -37,10 +37,17 @@ public class SecurityConfig {
 						.anyRequest().authenticated())
 
 				.formLogin(form -> form
-						.loginPage("/login")
-						.loginProcessingUrl("/login")
-						.successHandler(successHandler)
-						.permitAll())
+					    .loginPage("/login")
+					    .loginProcessingUrl("/login")
+					    .successHandler(successHandler)
+
+					    .failureHandler((request, response, exception) -> {
+					        request.getSession().setAttribute("error", exception.getMessage());
+					        response.sendRedirect("/login?error");
+					    })
+
+					    .permitAll()
+					)
 
 				.logout(logout -> logout
 						.logoutUrl("/logout")
@@ -48,7 +55,14 @@ public class SecurityConfig {
 						.permitAll())
 						
 				.exceptionHandling(ex -> ex
-						.accessDeniedPage("/error"));
+					    .accessDeniedHandler((request, response, exception) -> {
+
+					        request.setAttribute("status", 403);
+					        request.setAttribute("errorMessage", "You do not have permission");
+
+					        request.getRequestDispatcher("/error").forward(request, response);
+					    })
+					);
 						
 		return http.build();
 	}

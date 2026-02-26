@@ -9,32 +9,14 @@
 <body class="bg-light">
 
 <div class="container text-center mt-5">
-    <div class="card shadow p-5">
+   <div class="card shadow p-5">
+        <h1 class="text-danger">Oops! Something went wrong</h1>
 
-        <h2 class="text-danger">Oops! Something went wrong</h2>
+        <h3 th:text="${status}"></h3>
 
-        <!-- 403 -->
-        <p th:if="${code == 403}">
-            You do not have permission to access this page.
-        </p>
-
-        <!-- 404 -->
-        <p th:if="${code == 404}">
-            Page not found.
-        </p>
-
-        <!-- 500 -->
-        <p th:if="${code == 500}">
-            Internal server error occurred.
-        </p>
-
-        <!-- Default -->
-        <p th:if="${code != 403 and code != 404 and code != 500}">
-            Unexpected error occurred.
-        </p>
+        <p th:text="${errorMessage}"></p>
 
         <a href="/" class="btn btn-primary mt-3">Go Home</a>
-
     </div>
 </div>
 

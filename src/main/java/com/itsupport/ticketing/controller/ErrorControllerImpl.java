@@ -12,23 +12,26 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 public class ErrorControllerImpl implements ErrorController {
 
-   
-    @GetMapping("/access-denied")
-    public String accessDenied() {
-        return "access-denied";
-    }
+	 @RequestMapping("/error")
+	    public String handleError(HttpServletRequest request) {
 
-  
-    @RequestMapping("/error")
-    public String handleError(HttpServletRequest request, Model model) {
+	        Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
-        Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+	        if (status != null) {
 
-        if (status != null) {
-            int code = Integer.parseInt(status.toString());
-            model.addAttribute("code", code);
-        }
+	            int code = Integer.parseInt(status.toString());
 
-        return "error"; 
-    }
+	            if (code == 404) {
+	                request.setAttribute("errorMessage", "Page not found");
+	            } else if (code == 403) {
+	                request.setAttribute("errorMessage", "Access denied");
+	            } else {
+	                request.setAttribute("errorMessage", "Internal server error");
+	            }
+
+	            request.setAttribute("status", code);
+	        }
+
+	        return "error";
+	    }
 }
